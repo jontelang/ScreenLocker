@@ -1,0 +1,9 @@
+Package: com.jontelang.screenlocker
+Name: ScreenLocker
+Depends: mobilesubstrate, libactivator
+Version: 1.0
+Architecture: iphoneos-arm
+Description: Locks the screen 
+Maintainer: Jonathan Winger-lang
+Author: Jonathan Winger-lang
+Section: Tweaks
