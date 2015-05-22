@@ -1,5 +1,3 @@
-
-
 //
 // Defines
 //
@@ -22,14 +20,25 @@
 
 
 //
+// Static instances
+//
+static ScreenLockerWindow* SL;
+
+
+//
 // ScreenLockerWindow implementation 
 //
 @implementation ScreenLockerWindow
 
-- (void)activator:(LAActivator *)activator receiveEvent:(LAEvent *)event
+- (void)activator:(LAActivator *)activator receiveEvent:(LAEvent *)event forListenerName:(NSString *)listenerName
 {
 	if( self.hidden )
 	{
+		if( [listenerName isEqualToString:@"com.jontelang.screenlocker.invisible"] ){
+			SL.layer.borderWidth = 0;
+		}else{
+			SL.layer.borderWidth = 4;
+		}
 		[self makeKeyAndVisible];
 		[event setHandled:YES];
 	}
@@ -95,8 +104,10 @@
 {
 	if( alertView.tag == tag_setting_pin )
 	{
-		pin = [[alertView textFieldAtIndex:0] text];
-		[pin retain];
+		if( [[[alertView textFieldAtIndex:0] text] length] > 0 ){
+			pin = [[alertView textFieldAtIndex:0] text];
+			[pin retain];
+		}
 	}
 	// We're not setting the pin, so we must be unlocking
 	else
@@ -111,13 +122,6 @@
 
 @end
 
-
-//
-// Static instances
-//
-static ScreenLockerWindow* SL;
-
-
 //
 // Creates the actual Activator listener object
 //
@@ -126,16 +130,18 @@ static void createListener()
 	SL = [[ScreenLockerWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
 	[SL setBackgroundColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:0.05]];
 	[SL setWindowLevel:UIWindowLevelStatusBar+250];
-	SL.layer.borderWidth      = 4;
 	SL.layer.borderColor      = [[UIColor redColor] colorWithAlphaComponent:0.25f].CGColor;
 	SL.userInteractionEnabled = YES;
     SL.exclusiveTouch         = YES;
 	[[LAActivator sharedInstance] registerListener:SL forName:@"com.jontelang.screenlocker"];
+	[[LAActivator sharedInstance] registerListener:SL forName:@"com.jontelang.screenlocker.invisible"];
 
 	// No hardware buttons needed.
     UILongPressGestureRecognizer *hold = 
 			[[UILongPressGestureRecognizer alloc] initWithTarget:SL 
 			                   action:@selector(longHold:)];
+	hold.minimumPressDuration = 3;
+	hold.numberOfTouchesRequired = 2;
     [SL addGestureRecognizer:hold];
 }
 
