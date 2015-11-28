@@ -127,7 +127,12 @@ static ScreenLockerWindow* SL;
 //
 static void createListener()
 {
-	SL = [[ScreenLockerWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    if( [[[UIDevice currentDevice] systemVersion] floatValue] >= 9.0f ){
+        SL = [[ScreenLockerWindow alloc] init];
+    }else{
+        SL = [[ScreenLockerWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    }
+    
 	[SL setBackgroundColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:0.05]];
 	[SL setWindowLevel:UIWindowLevelStatusBar+250];
 	SL.layer.borderColor      = [[UIColor redColor] colorWithAlphaComponent:0.25f].CGColor;
