@@ -1,4 +1,4 @@
 {
 	title = ScreenLocker;
-	description = "Locks the screen";
+	description = "Locks the screen WITH a red border";
 }
